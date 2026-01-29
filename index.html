@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#050505" />
+    <meta name="description" content="Kobo — The water bottle that knows you." />
+    
+    <!-- Preconnect to font sources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Editorial fonts: Orbitron for display, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    
+    <title>Kobo — The water bottle that knows you</title>
+    
+    <style>
+      /* Critical CSS for instant load feel */
+      html, body {
+        background-color: #050505;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+      
+      /* Prevent FOUC */
+      html {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
