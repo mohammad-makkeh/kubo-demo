@@ -1,32 +1,20 @@
 @import "tailwindcss";
 
-/* ========================================
-   KOBO — Global Styles
-   ======================================== */
-
 @layer base {
   :root {
     --kobo-black: #050505;
     --kobo-white: #f5f5f7;
     --kobo-liquid: #c0d4e8;
     --kobo-glow: rgba(192, 212, 232, 0.15);
-    
-    /* Scroll-linked custom properties (updated via JS) */
-    --scroll-progress: 0;
-    --mouse-x: 0.5;
-    --mouse-y: 0.5;
-    
-    /* Animation timing */
     --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
     --ease-circ: cubic-bezier(0, 0.55, 0.45, 1);
     --ease-smooth: cubic-bezier(0.45, 0, 0.55, 1);
-    
     background-color: var(--kobo-black);
     color: var(--kobo-white);
   }
 
   html {
-    scroll-behavior: auto; /* Let Lenis handle smoothness */
+    scroll-behavior: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -42,19 +30,16 @@
     cursor: default;
   }
 
-  /* Selection styling */
   ::selection {
     background-color: var(--kobo-white);
     color: var(--kobo-black);
   }
 
-  /* Focus styles */
   :focus-visible {
     outline: 1px solid var(--kobo-white);
     outline-offset: 4px;
   }
 
-  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -73,235 +58,7 @@
   }
 }
 
-@layer components {
-  /* Typography utilities */
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .text-pretty {
-    text-wrap: pretty;
-  }
-
-  /* Split text container */
-  .split-text {
-    overflow: hidden;
-    display: inline-block;
-  }
-
-  .split-text .char,
-  .split-text .word,
-  .split-text .line {
-    display: inline-block;
-    will-change: transform, opacity;
-  }
-
-  /* Reveal mask */
-  .reveal-mask {
-    overflow: hidden;
-  }
-
-  .reveal-mask > * {
-    will-change: transform;
-  }
-
-  /* Magnetic button base */
-  .magnetic {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Glass morphism */
-  .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  /* Glow effect */
-  .glow {
-    box-shadow: 
-      0 0 60px var(--kobo-glow),
-      0 0 120px var(--kobo-glow);
-  }
-
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(
-      135deg,
-      var(--kobo-white) 0%,
-      var(--kobo-liquid) 50%,
-      var(--kobo-white) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* Noise texture overlay */
-  .noise-overlay {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.025;
-    z-index: 9999;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  }
-
-  /* Section spacing */
-  .section {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    overflow: hidden;
-  }
-
-  .section-content {
-    position: relative;
-    width: 100%;
-    max-width: 1920px;
-    margin: 0 auto;
-    padding: 0 clamp(1.5rem, 5vw, 4rem);
-  }
-
-  /* Pinned section */
-  .pin-section {
-    position: relative;
-  }
-
-  /* Perspective container */
-  .perspective {
-    perspective: 1000px;
-    perspective-origin: 50% 50%;
-  }
-
-  /* 3D preserved */
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-
-  /* Horizontal scroll container */
-  .horizontal-scroll {
-    display: flex;
-    flex-wrap: nowrap;
-  }
-
-  /* Video container */
-  .video-container {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .video-container video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-@layer utilities {
-  /* GPU acceleration */
-  .gpu {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
-
-  /* Will change hints */
-  .will-transform {
-    will-change: transform;
-  }
-
-  .will-opacity {
-    will-change: opacity;
-  }
-
-  .will-all {
-    will-change: transform, opacity;
-  }
-
-  /* Clip utilities */
-  .clip-inset-0 {
-    clip-path: inset(0);
-  }
-
-  .clip-inset-full {
-    clip-path: inset(0 0 100% 0);
-  }
-
-  /* Hide scrollbar */
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Pointer events */
-  .events-none {
-    pointer-events: none;
-  }
-
-  .events-auto {
-    pointer-events: auto;
-  }
-
-  /* Blend modes */
-  .blend-difference {
-    mix-blend-mode: difference;
-  }
-
-  .blend-exclusion {
-    mix-blend-mode: exclusion;
-  }
-
-  .blend-overlay {
-    mix-blend-mode: overlay;
-  }
-
-  /* Custom easing classes */
-  .ease-expo {
-    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-  }
-
-  /* Text stroke */
-  .text-stroke {
-    -webkit-text-stroke: 1px currentColor;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .text-stroke-2 {
-    -webkit-text-stroke: 2px currentColor;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* Aspect ratios */
-  .aspect-product {
-    aspect-ratio: 3/4;
-  }
-
-  .aspect-cinematic {
-    aspect-ratio: 21/9;
-  }
-
-  /* Full bleed */
-  .full-bleed {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-  }
-}
-
-/* ========================================
-   Custom Theme Extensions (Tailwind 4)
-   ======================================== */
-
 @theme {
-  /* Colors */
   --color-kobo-black: #050505;
   --color-kobo-off-black: #0a0a0a;
   --color-kobo-dark: #111111;
@@ -313,12 +70,10 @@
   --color-kobo-cream: #d4d4d6;
   --color-kobo-liquid: #c0d4e8;
   --color-kobo-glow: rgba(192, 212, 232, 0.15);
-  
-  /* Fonts */
+
   --font-display: 'Orbitron', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
-  
-  /* Font sizes - fluid typography */
+
   --text-display-xl: clamp(4rem, 15vw, 20rem);
   --text-display-lg: clamp(3rem, 10vw, 12rem);
   --text-display-md: clamp(2rem, 6vw, 6rem);
@@ -328,80 +83,36 @@
   --text-body: clamp(0.875rem, 1.2vw, 1rem);
   --text-caption: clamp(0.75rem, 1vw, 0.875rem);
   --text-micro: 0.625rem;
-  
-  /* Spacing */
+
   --spacing-section: clamp(8rem, 20vh, 16rem);
   --spacing-gutter: clamp(1.5rem, 5vw, 4rem);
-  
-  /* Letter spacing */
+
   --tracking-tightest: -0.06em;
   --tracking-tighter: -0.04em;
   --tracking-tight: -0.02em;
   --tracking-wide: 0.1em;
   --tracking-wider: 0.2em;
   --tracking-widest: 0.3em;
-  
-  /* Z-index */
+
   --z-preloader: 9999;
-  --z-cursor: 9998;
   --z-nav: 100;
   --z-overlay: 50;
-  
-  /* Animations */
+
   --animate-fade-in: fadeIn 1s ease-out forwards;
   --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-float: float 6s ease-in-out infinite;
-  
-  /* Keyframes */
+
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  
+
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-20px); }
   }
-  
-  /* Easings */
+
   --ease-expo-out: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-expo-in-out: cubic-bezier(0.87, 0, 0.13, 1);
   --ease-circ-out: cubic-bezier(0, 0.55, 0.45, 1);
 }
-
-/* ========================================
-   Custom cursor (optional enhancement)
-   ======================================== */
-
-.cursor-dot {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background-color: var(--kobo-white);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9998;
-  mix-blend-mode: difference;
-  transform: translate(-50%, -50%);
-  transition: transform 0.15s var(--ease-expo);
-}
-
-.cursor-dot.active {
-  transform: translate(-50%, -50%) scale(3);
-}
-
-/* ========================================
-   Preloader specific
-   ======================================== */
-
-.preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--kobo-black);
-}
-
-

@@ -5,8 +5,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import waterVideo from '../assets/water-flowing-wide.mp4';
 
-gsap.registerPlugin(ScrollTrigger);
-
 export interface IWaterVideoProps {
     className?: string;
 }
