@@ -1,13 +1,14 @@
-import { useRef } from 'react';
+import { useRef, type RefObject } from 'react';
 import { Canvas } from '@react-three/fiber';
 import BottleModel from './bottle-model';
 import DynamicLighting from './dynamic-lighting';
 
 export interface BottleSceneProps {
   setBottleHorizontal: (value: boolean) => void;
+  triggerRef: RefObject<HTMLDivElement | null>;
 }
 
-function Scene({ setBottleHorizontal, triggerRef }: BottleSceneProps & { triggerRef: React.RefObject<HTMLDivElement> }) {
+function Scene({ setBottleHorizontal, triggerRef }: BottleSceneProps) {
   return (
     <group position={[0, 0, 0]}>
       <DynamicLighting />

@@ -1,4 +1,4 @@
-import { useRef, useMemo, RefObject } from 'react';
+import { useRef, useMemo, type RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -9,7 +9,7 @@ import bottleModelUrl from '../../assets/bottle.glb?url';
 
 export interface BottleModelProps {
   setBottleHorizontal: (value: boolean) => void;
-  triggerRef: RefObject<HTMLDivElement>;
+  triggerRef: RefObject<HTMLDivElement | null>;
 }
 
 export default function BottleModel({ setBottleHorizontal, triggerRef }: BottleModelProps) {
