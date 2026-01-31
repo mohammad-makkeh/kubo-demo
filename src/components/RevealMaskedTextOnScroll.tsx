@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import cn from '../utils/cn';
 
@@ -21,35 +22,45 @@ export default function RevealMaskedTextOnScroll({
 }: RevealMaskedTextOnScrollProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const isSplit = useRef<boolean>(false);
+  const splitInstance = useRef<SplitText | null>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   useGSAP(() => {
     if (!containerRef.current || !textRef.current) return;
-    if (isSplit.current) return;
+    if (splitInstance.current) return;
 
     const container = containerRef.current;
     const textElement = textRef.current;
 
-    SplitText.create(textElement, {
+    splitInstance.current = SplitText.create(textElement, {
       type: "words,lines",
       mask: "lines",
-      linesClass: "line",
       autoSplit: true,
       onSplit: (instance) => {
-        return gsap.from(instance.lines, {
-          yPercent: 120,
+        gsap.set(instance.lines, { yPercent: 120 });
+
+        const tween = gsap.to(instance.lines, {
+          yPercent: 0,
           stagger: 0.2,
           scrollTrigger: {
             trigger: container,
             scrub: true,
+            invalidateOnRefresh: true,
             start: start || "clamp(top center)",
-            end: end || "clamp(bottom center)"
+            end: end || "clamp(bottom center)",
           }
         });
+
+        scrollTriggerRef.current = tween.scrollTrigger as ScrollTrigger;
+        return tween;
       }
     });
 
-    isSplit.current = true;
+    return () => {
+      scrollTriggerRef.current?.kill();
+      splitInstance.current?.revert();
+      splitInstance.current = null;
+    };
   }, { scope: containerRef, dependencies: [start, end] });
 
   return (

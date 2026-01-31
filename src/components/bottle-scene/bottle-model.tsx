@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -9,13 +9,16 @@ import bottleModelUrl from '../../assets/bottle.glb?url';
 
 export interface BottleModelProps {
   setBottleHorizontal: (value: boolean) => void;
+  triggerRef: RefObject<HTMLDivElement>;
 }
 
-export default function BottleModel({ setBottleHorizontal }: BottleModelProps) {
+export default function BottleModel({ setBottleHorizontal, triggerRef }: BottleModelProps) {
   const { scene: bottle } = useGLTF(bottleModelUrl);
   const groupRef = useRef<THREE.Group>(null);
   const progress = useRef({ y: 0, scale: 1, rotateX: 0, x: -2, rotateZ: 0 });
   const calledOnHorizontal = useRef(false);
+  const bottleTimeline = useRef<gsap.core.Timeline | null>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   const clonedBottle = useMemo(() => {
     const clone = bottle.clone();
@@ -35,34 +38,39 @@ export default function BottleModel({ setBottleHorizontal }: BottleModelProps) {
   }, [bottle]);
 
   useGSAP(() => {
-    const bottleTl = gsap.timeline({
+    if (!triggerRef.current) return;
+
+    bottleTimeline.current = gsap.timeline({
       defaults: { ease: "none" },
     });
 
-    bottleTl.fromTo(progress.current, { y: -3 }, { y: -6 });
-    bottleTl.to(progress.current, { x: -6 });
-    bottleTl.addPause("+=0.3");
-    bottleTl.to(progress.current, {
+    bottleTimeline.current.fromTo(progress.current, { y: -3 }, { y: -6 });
+    bottleTimeline.current.to(progress.current, { x: -6 });
+    bottleTimeline.current.addPause("+=0.3");
+    bottleTimeline.current.to(progress.current, {
       rotateZ: -Math.PI / 2,
       y: 2.5,
       x: -3.8,
     });
-    bottleTl.addLabel("on:horizontal");
-    bottleTl.to(progress.current, {
+    bottleTimeline.current.addLabel("on:horizontal");
+    bottleTimeline.current.to(progress.current, {
       y: -10,
       opacity: 0,
     });
 
-    const st = ScrollTrigger.create({
-      trigger: '#bottle-scene',
+    scrollTriggerRef.current = ScrollTrigger.create({
+      trigger: triggerRef.current,
       start: '10% top',
       end: '300% bottom',
       scrub: true,
-      animation: bottleTl,
+      invalidateOnRefresh: true,
+      fastScrollEnd: true,
+      animation: bottleTimeline.current,
       onUpdate() {
-        const p = bottleTl.progress();
-        const totalDuration = bottleTl.duration();
-        const horizontalLabelTime = bottleTl.labels["on:horizontal"];
+        if (!bottleTimeline.current) return;
+        const p = bottleTimeline.current.progress();
+        const totalDuration = bottleTimeline.current.duration();
+        const horizontalLabelTime = bottleTimeline.current.labels["on:horizontal"];
         const horizontalLabelProgress = horizontalLabelTime / totalDuration;
 
         if (p >= horizontalLabelProgress && !calledOnHorizontal.current) {
@@ -75,8 +83,10 @@ export default function BottleModel({ setBottleHorizontal }: BottleModelProps) {
       }
     });
 
-    return () => st.kill();
-  }, [setBottleHorizontal]);
+    return () => {
+      scrollTriggerRef.current?.kill();
+    };
+  }, [setBottleHorizontal, triggerRef]);
 
   useFrame(() => {
     if (!groupRef.current) return;

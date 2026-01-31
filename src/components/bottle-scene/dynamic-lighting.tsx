@@ -1,28 +1,29 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import gsap from 'gsap';
+
+const MIN_INTENSITY = 0.2;
+const MAX_INTENSITY = 3;
+const SPEED = 3;
 
 export default function DynamicLighting() {
   const ambientLight = useRef<THREE.AmbientLight>(null);
   const keyLight = useRef<THREE.SpotLight>(null);
   const rimLight = useRef<THREE.SpotLight>(null);
 
-  const minIntensity = 0.2;
-  const maxIntensity = 3;
-  const speed = 5;
+  const startColor = useMemo(() => new THREE.Color('#dedcdc'), []);
+  const endColor = useMemo(() => new THREE.Color('#7883ff'), []);
+  const currentColor = useMemo(() => new THREE.Color(), []);
 
   useFrame(({ clock }) => {
-    if (!ambientLight.current) return;
+    if (!ambientLight.current || !rimLight.current) return;
 
     const t = clock.getElapsedTime();
-    const wave = (Math.sin(t * speed) + 1) / 2;
-    const color = gsap.utils.interpolate('#dedcdc', '#7883ff', wave);
+    const wave = (Math.sin(t * SPEED) + 1) / 2;
 
-    ambientLight.current.intensity = minIntensity + wave * (maxIntensity - minIntensity);
-
-    if (!rimLight.current) return;
-    rimLight.current.color = new THREE.Color(color);
+    ambientLight.current.intensity = MIN_INTENSITY + wave * (MAX_INTENSITY - MIN_INTENSITY);
+    currentColor.lerpColors(startColor, endColor, wave);
+    rimLight.current.color.copy(currentColor);
   });
 
   return (

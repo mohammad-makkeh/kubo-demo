@@ -37,7 +37,7 @@ function App() {
     <div className="bg-kobo-black text-kobo-white min-h-screen w-full selection:bg-kobo-white selection:text-kobo-black overflow-x-hidden">
       {isLoading && <Preloader onComplete={handlePreloadComplete} />}
       {!isLoading && (
-        <main ref={mainRef} className="relative min-h-[500vh]" style={{ opacity: 1 }}>
+        <main ref={mainRef} className="relative" style={{ opacity: 1 }}>
           <WaterVideo />
           <Hero />
           <BottleScene setBottleHorizontal={setIsBottleHorizontal} />

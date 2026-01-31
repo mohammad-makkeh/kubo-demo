@@ -1,9 +1,6 @@
-/**
- * KOBO — Preloader
- * Cinematic entrance sequence
- */
-
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useRef, useState } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 interface PreloaderProps {
   onComplete: () => void;
@@ -11,75 +8,61 @@ interface PreloaderProps {
 
 export default function Preloader({ onComplete }: PreloaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const [count, setCount] = useState(0);
-  const [isExiting, setIsExiting] = useState(false);
-  const rafRef = useRef<number>(0);
-  const startTimeRef = useRef<number>(0);
 
-  const animate = useCallback((currentTime: number) => {
-    if (!startTimeRef.current) {
-      startTimeRef.current = currentTime;
-    }
-    
-    const elapsed = currentTime - startTimeRef.current;
-    const duration = 2000; // 2 seconds
-    const progress = Math.min(elapsed / duration, 1);
-    
-    // Ease out quad
-    const eased = 1 - (1 - progress) * (1 - progress);
-    const currentCount = Math.round(eased * 100);
-    
-    setCount(currentCount);
-    
-    if (progress < 1) {
-      rafRef.current = requestAnimationFrame(animate);
-    } else {
-      // Start exit animation
-      setIsExiting(true);
-      setTimeout(() => {
-        onComplete();
-      }, 600);
-    }
-  }, [onComplete]);
+  useGSAP(() => {
+    const proxy = { value: 0 };
 
-  useEffect(() => {
-    // Start animation
-    rafRef.current = requestAnimationFrame(animate);
-    
+    const countTween = gsap.to(proxy, {
+      value: 100,
+      duration: 2,
+      ease: "power2.out",
+      onUpdate: () => setCount(Math.round(proxy.value)),
+      onComplete: () => {
+        gsap.to(containerRef.current, {
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.inOut",
+          onComplete,
+        });
+      },
+    });
+
+    gsap.to(progressBarRef.current, {
+      scaleX: 1,
+      duration: 2,
+      ease: "power2.out",
+    });
+
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
+      countTween.kill();
     };
-  }, [animate]);
+  }, { scope: containerRef });
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className={`fixed inset-0 z-[9999] bg-kobo-black flex flex-col items-center justify-center transition-opacity duration-500 ${isExiting ? 'opacity-0' : 'opacity-100'}`}
+      className="fixed inset-0 z-[9999] bg-kobo-black flex flex-col items-center justify-center"
     >
-      {/* Counter */}
       <div className="relative font-display text-[15vw] md:text-[12vw] font-light tracking-tighter text-kobo-white">
         <span className="tabular-nums">{count.toString().padStart(3, '0')}</span>
         <span className="text-[5vw] md:text-[4vw] opacity-30 ml-2">%</span>
       </div>
 
-      {/* Loading text */}
       <div className="absolute bottom-[15vh] flex flex-col items-center gap-4">
         <span className="font-body text-xs uppercase tracking-widest text-kobo-white/30">
           Loading experience
         </span>
-        
-        {/* Progress bar */}
         <div className="w-48 h-px bg-kobo-white/10 overflow-hidden">
-          <div 
-            className="h-full bg-kobo-white origin-left transition-transform duration-100"
-            style={{ transform: `scaleX(${count / 100})` }}
+          <div
+            ref={progressBarRef}
+            className="h-full bg-kobo-white origin-left"
+            style={{ transform: 'scaleX(0)' }}
           />
         </div>
       </div>
 
-      {/* Corner markers */}
       <div className="absolute top-8 left-8 w-4 h-4 border-l border-t border-kobo-white/10" />
       <div className="absolute top-8 right-8 w-4 h-4 border-r border-t border-kobo-white/10" />
       <div className="absolute bottom-8 left-8 w-4 h-4 border-l border-b border-kobo-white/10" />
